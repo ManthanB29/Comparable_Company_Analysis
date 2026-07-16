@@ -5,6 +5,7 @@ import pandas as pd
 from .config import *
 
 
+
 def get_price_data(ticker, income):
 
     start_year = income.index.year.min()
