@@ -4,7 +4,6 @@ import pandas as pd
 
 from .config import *
 
-
 def get_financial_statements(ticker):
 
     stock = yf.Ticker(ticker)
