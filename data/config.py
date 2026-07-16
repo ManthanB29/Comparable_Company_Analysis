@@ -2,6 +2,7 @@
 #Company 
 TICKERS = ["V", "MA", "AXP", "PYPL"] 
 
+
 Company = { 
 "V": "Visa", 
 "MA": "Mastercard", 
