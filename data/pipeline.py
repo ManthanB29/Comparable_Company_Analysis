@@ -6,7 +6,6 @@ from .config import *
 from .data_loader import *
 from .price_loader import *
 
-
 def build_dataset():
 
     all_data = []
