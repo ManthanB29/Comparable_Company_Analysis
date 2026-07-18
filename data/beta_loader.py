@@ -1,11 +1,12 @@
 
+
 import yfinance as yf
 import pandas as pd
 
 def get_beta(tickers):
 
     betas = {}
-
+    
     for ticker in tickers:
         try:
             stock = yf.Ticker(ticker)
@@ -15,5 +16,5 @@ def get_beta(tickers):
             betas[ticker] = 1.0
 
     beta = pd.Series(betas)
-
+    
     return beta
