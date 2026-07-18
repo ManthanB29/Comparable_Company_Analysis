@@ -4,14 +4,15 @@ import pandas as pd
 
 from .config import *
 
+
 def get_financial_statements(ticker):
 
     stock = yf.Ticker(ticker)
 
     try:
-        income = stock.financials.T.sort_index()
-        balance = stock.balance_sheet.T.sort_index()
-        cashflow = stock.cashflow.T.sort_index()
+        income = stock.financials.T.sort_index().drop_duplicates()
+        balance = stock.balance_sheet.T.sort_index().drop_duplicates()
+        cashflow = stock.cashflow.T.sort_index().drop_duplicates()
     except Exception as e:
         raise ValueError(f"Error fetching data for {ticker}: {e}")
 
@@ -33,13 +34,13 @@ def build_financial_dataframe(ticker):
     df["NetIncome"] = income.get("Net Income")
     df["EBIT"] = income.get("Operating Income")
     df["EBITDA"] = income.get("EBITDA")
-    df["Depreciation"] = cashflow.get("Depreciation")
-    df["Depreciation"]= pd.to_numeric(df["Depreciation"], errors="coerce")
-    df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
+    df["Interest"] = income.get("Interest Expense")
+    df["Tax"] = income.get("Tax Provision")
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
     df["Capex"] = abs(cashflow.get("Capital Expenditure"))
     df["FCF"] = cashflow.get("Free Cash Flow")
+    df["Depreciation"]  = cashflow.get("Depreciation And Amortization")
 
     df["TotalAssets"] = balance.get("Total Assets")
     df["Equity"] = balance.get("Stockholders Equity")
@@ -48,20 +49,26 @@ def build_financial_dataframe(ticker):
 
     df = df.apply(pd.to_numeric, errors="coerce")
 
-    df = df.ffill()
-
-    if "EBIT" in df.columns:
-      df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
+    if df["EBIT"].isna().any():
+       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income") + df["Interest"].abs())
 
     if "Depreciation" in df.columns:
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
 
-    if "EBITDA" in df.columns:
+    df["EBITDA_computed"] = df["EBIT"] + df["Depreciation"]
+    df["EBITDA"] = df[["EBITDA", "EBITDA_computed"]].max(axis=1)
+    df.drop(columns=["EBITDA_computed"], inplace=True)
+
+    if df["EBITDA"].isna().any():
       df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
+
+    if df["Capex"].isna().any():
+      df["Capex"] = df["Capex"].fillna(0)
 
     df = df / Scale
 
-
+    df["EPS"]  = (income.get("Diluted EPS")).round(2)
+    df["Shares"] = balance.get("Ordinary Shares Number")
     df["Ticker"] = ticker
     df["Year"] = df.index.year
 
