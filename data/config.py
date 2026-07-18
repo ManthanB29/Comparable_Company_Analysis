@@ -1,4 +1,5 @@
 
+
 #Company
 TICKERS = ["V", "MA", "AXP", "PYPL"]
 
