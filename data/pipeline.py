@@ -6,6 +6,7 @@ from .config import *
 from .data_loader import *
 from .price_loader import *
 
+
 def build_dataset():
 
     all_data = []
@@ -19,11 +20,9 @@ def build_dataset():
 
       df = pd.merge(financial_df, price_df, on=["Ticker", "Year"], how="left")
 
-      stock = yf.Ticker(ticker)
-      shares = stock.info.get("sharesOutstanding", None)
-
-      df["Shares"] = shares
-      df["Market_Cap"] = df["Close"] * df["Shares"]
+      df["MarketCap"] = (df["Close"] * df["Shares"]).round(2)
+      df["NetDebt"] = df["TotalDebt"] - df["Cash"]
+      df["EV"] = (df["MarketCap"] + (df["NetDebt"] * Scale)).round(2)
 
       all_data.append(df)
 
