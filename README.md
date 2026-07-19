@@ -31,7 +31,7 @@ Built end-to-end with a modular Python pipeline for data ingestion, ratio analys
 │
 ├── dashboard/                   # CSVs and Tableau Workbook
 │
-├── Comps_Analysis.ipynb         # Main orchestration notebook
+├── Comparable_Company_Analysis.ipynb         # Main orchestration notebook
 └── README.md
 ```
 
