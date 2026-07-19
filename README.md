@@ -176,7 +176,7 @@ Exports two clean CSVs — financials and ratios — formatted for direct use as
 ```bash
 # Clone the repo
 git clone https://github.com/ManthanB29/Comparable_Company_Analysis.git
-cd Comp_Analysis
+cd Comparable_Company_Analysis
 
 # Install dependencies
 pip install pandas numpy yfinance
