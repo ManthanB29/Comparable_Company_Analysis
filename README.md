@@ -182,7 +182,7 @@ cd Comparable_Company_Analysis
 pip install pandas numpy yfinance
 
 # Run the model
-notebook Comps_Analysis.ipynb
+notebook Comparable_Company_Analysis.ipynb
 ```
 
 ---
